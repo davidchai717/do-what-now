@@ -5,11 +5,9 @@ require("dotenv").config();
 const mb = menubar();
 const tt = new TickTick();
 
-mb.on("ready", async () => {
-  await tt.login({
-    username: process.env.USERNAME,
-    password: process.env.PASSWORD,
-  });
+let interval;
+
+const getAndSetTask = async () => {
   const incompleteTasks = await tt.getTasks({
     status: 0,
   });
@@ -18,5 +16,22 @@ mb.on("ready", async () => {
     (tasks) => new Date(tasks.startDate) <= new Date()
   );
 
-  mb.tray.setTitle(tasksForToday[0]?.title || "N/A");
+  mb.tray.setTitle("Do this>>> " + (tasksForToday[0]?.title || "N/A") + " <<<");
+};
+
+mb.on("ready", async () => {
+  await tt.login({
+    username: process.env.USERNAME,
+    password: process.env.PASSWORD,
+  });
+
+  await getAndSetTask();
+
+  interval = setInterval(() => {
+    getAndSetTask();
+  }, 5000);
+});
+
+mb.on("window-all-closed", () => {
+  clearInterval(interval);
 });
