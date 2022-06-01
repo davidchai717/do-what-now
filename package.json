@@ -20,7 +20,7 @@
   "dependencies": {
     "axios": "^0.27.2",
     "dotenv": "^16.0.1",
-    "menubar": "^9.2.0",
+    "electron-preferences": "^2.6.0",
     "ticktick-node-api": "^1.2.0"
   },
   "devDependencies": {
