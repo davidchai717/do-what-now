@@ -35,7 +35,7 @@ const tt = new TickTick();
 let interval;
 let tray;
 
-const getAndSetTask = async () => {
+const getTaskTitle = async () => {
   const incompleteTasks = await tt.getTasks({
     status: 0,
   });
@@ -44,8 +44,14 @@ const getAndSetTask = async () => {
     (tasks) => new Date(tasks.startDate) <= new Date()
   );
 
-  tray.setTitle("Do this>>> " + (tasksForToday[0]?.title || "N/A") + " <<<");
+  if (!tasksForToday.length) {
+    // tray.setTitle("All done for today!");
+    return "All done for today!";
+  }
+
+  return "Do this>>> " + (tasksForToday[0]?.title || "N/A") + " <<<";
 };
+
 app.setName("DoWhatNow");
 
 app.whenReady().then(async () => {
@@ -70,10 +76,10 @@ app.whenReady().then(async () => {
       password: process.env.PASSWORD,
     });
 
-    await getAndSetTask();
+    tray.setTitle(await getTaskTitle());
 
-    interval = setInterval(() => {
-      getAndSetTask();
+    interval = setInterval(async () => {
+      tray.setTitle(await getTaskTitle());
     }, 5000);
   } catch (e) {
     throw e;
