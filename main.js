@@ -2,6 +2,8 @@ const { app, Menu, Tray } = require("electron");
 const TickTickService = require("./services/TickTick");
 require("dotenv").config();
 
+const tt = new TickTickService();
+
 let interval;
 let tray;
 
@@ -24,12 +26,15 @@ app.whenReady().then(async () => {
       { role: "quit" },
     ]);
     tray.setContextMenu(contextMenu);
-    await TickTickService.login();
+    await tt.login({
+      username: process.env.USERNAME,
+      password: process.env.PASSWORD,
+    });
 
-    tray.setTitle(await TickTickService.getTaskTitle());
+    tray.setTitle(await tt.getTaskTitle());
 
     interval = setInterval(async () => {
-      tray.setTitle(await TickTickService.getTaskTitle());
+      tray.setTitle(await tt.getTaskTitle());
     }, 5000);
   } catch (e) {
     throw e;
