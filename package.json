@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "dev": "electron main",
+    "dev": "electron dist/main",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,7 +23,7 @@
     "dotenv": "^16.0.1"
   },
   "devDependencies": {
-    "electron": "^17.0.0",
+    "electron": "^19.0.2",
     "typescript": "^4.7.2"
   }
 }

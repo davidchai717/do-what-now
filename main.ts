@@ -1,5 +1,6 @@
-const { app, Menu, Tray } = require("electron");
-const TickTickService = require("./services/TickTick");
+import { app, Menu, Tray } from "electron";
+import TickTickService from "./services/TickTick";
+
 require("dotenv").config();
 
 const tt = new TickTickService();
@@ -13,7 +14,7 @@ app.whenReady().then(async () => {
   try {
     tray = new Tray("tick.png");
     const contextMenu = Menu.buildFromTemplate([
-      { id: 0, label: "Ready to sync...", enabled: false },
+      { id: "sync-status", label: "Ready to sync...", enabled: false },
       { type: "separator" },
       { label: "Sync Now" },
       {

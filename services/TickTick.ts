@@ -1,4 +1,4 @@
-const axios = require("axios");
+import axios from "axios";
 
 /**
  * Forked from https://github.com/ArthurDelamare/ticktick-api
@@ -6,36 +6,34 @@ const axios = require("axios");
  */
 
 class TickTickService {
-  constructor() {}
+  cookieHeader: string;
+
+  constructor() {
+    this.cookieHeader = "";
+  }
 
   /**
    * Login to TickTick, necessary to make any other request
-   * @param {Object} credentials
-   * @param {string} credentials.username
-   * @param {string} credentials.password
    */
-  async login({ username, password }) {
+  async login({ username, password }): Promise<void> {
     const url = "https://ticktick.com/api/v2/user/signon?wc=true&remember=true";
 
     const options = {
-      username: username,
-      password: password,
+      username,
+      password,
     };
     const result = await axios.post(url, options, {
       headers: { "Content-Type": "application/json" },
     });
 
-    this.cookies = result.headers["set-cookie"];
-    this.cookieHeader = this.cookies.join("; ") + ";";
-
-    return result;
+    this.cookieHeader = result.headers["set-cookie"].join("; ") + ";";
   }
 
   /**
    * @description send a request to https://ticktick.com/api/v2/batch/check/{id} endpoint
    * @param {number} id
    */
-  async _batchCheck(id = 0) {
+  async _batchCheck(id: number = 0) {
     if (!this.cookieHeader) {
       throw new Error("Cookie header is not set.");
     }
@@ -67,12 +65,9 @@ class TickTickService {
   }
 
   /**
-   * @param {Object} options
-   * @param {string} options.name name of the project
-   * @param {number} options.status 0 = uncompleted tasks, 2 = completed tasks
-   *
+   * 0 = uncompleted tasks, 2 = completed tasks
    */
-  async getTasks({ name, status }) {
+  async getTasks({ status }: { status?: 0 | 2 }) {
     const batch = await this._batchCheck(1);
 
     if (
@@ -83,16 +78,6 @@ class TickTickService {
     }
 
     let tasks = batch.data.syncTaskBean.update;
-
-    if (name) {
-      const projectId = this._getProjectIdFromProjectProfiles(
-        batch.data["projectProfiles"],
-        name
-      );
-      tasks = batch.data.syncTaskBean.update.filter(
-        (task) => task.projectId === projectId
-      );
-    }
 
     if (status != null && status != undefined) {
       tasks = tasks.filter((task) => task.status === status);
@@ -116,4 +101,4 @@ class TickTickService {
   }
 }
 
-module.exports = TickTickService;
+export default TickTickService;
