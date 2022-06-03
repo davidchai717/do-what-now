@@ -1,4 +1,4 @@
-import { app, Menu, Tray } from "electron";
+import { app, Menu, Tray, BrowserWindow } from "electron";
 import TickTickService from "./services/TickTick";
 
 require("dotenv").config();
@@ -12,6 +12,19 @@ app.setName("DoWhatNow");
 
 app.whenReady().then(async () => {
   try {
+    const window = new BrowserWindow({
+      show: false,
+      titleBarStyle: "hidden",
+      titleBarOverlay: true,
+    });
+
+    window.on("close", (e) => {
+      e.preventDefault();
+      window.hide();
+      window.reload();
+    });
+
+    window.loadFile("../public/preferences.html");
     tray = new Tray("tick.png");
     const contextMenu = Menu.buildFromTemplate([
       { id: "sync-status", label: "Ready to sync...", enabled: false },
@@ -20,7 +33,7 @@ app.whenReady().then(async () => {
       {
         label: "Preferences",
         click: () => {
-          console.log("not built yet");
+          window.show();
         },
       },
       { type: "separator" },
