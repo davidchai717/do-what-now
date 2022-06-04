@@ -94,10 +94,10 @@ class TickTickService {
     });
 
     if (!tasksForToday.length) {
-      return "All done for today!";
+      return "✅ All done for today!";
     }
 
-    return "Do this>>> " + (tasksForToday[0]?.title || "N/A") + " <<<";
+    return "Do this now: ❗" + (tasksForToday[0]?.title || "N/A") + "❗";
   }
 }
 
