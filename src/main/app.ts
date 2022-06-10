@@ -48,7 +48,7 @@ app.whenReady().then(async () => {
 
     interval = setInterval(async () => {
       tray.setTitle(await tt.getTaskTitle());
-    }, +process.env.INTERVAL);
+    }, +process.env.INTERVAL || 30000);
   } catch (e) {
     throw e;
   }
