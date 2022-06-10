@@ -67,7 +67,7 @@ class TickTickService {
   /**
    * 0 = uncompleted tasks, 2 = completed tasks
    */
-  async getTasks({ status }: { status?: 0 | 2 }) {
+  async getTasksFromToday({ status }: { status?: 0 | 2 }) {
     const batch = await this._batchCheck(1);
 
     if (
@@ -83,21 +83,27 @@ class TickTickService {
       tasks = tasks.filter((task) => task.status === status);
     }
 
-    return tasks.filter(
-      (task) => new Date(task.startDate) <= new Date() && task.priority === 5
-    );
+    return tasks.filter((task) => new Date(task.startDate) <= new Date());
+  }
+
+  getTasksToPin(tasks) {
+    return tasks.filter((task) => task.priority === 5);
   }
 
   async getTaskTitle() {
-    const tasksForToday = await this.getTasks({
-      status: 0,
-    });
+    const todayTasks = await this.getTasksFromToday({ status: 0 });
+    const tasksToPin = this.getTasksToPin(todayTasks);
 
-    if (!tasksForToday.length) {
+    if (!tasksToPin.length) {
+      if (todayTasks.length) {
+        return (
+          "⏭ " + todayTasks.length + " more tasks to go! Pin the next task"
+        );
+      }
       return "✅ All done for today!";
     }
 
-    return "Do this now: ❗" + (tasksForToday[0]?.title || "N/A") + "❗";
+    return "Do this now: ❗" + (tasksToPin[0]?.title || "N/A") + "❗";
   }
 }
 
