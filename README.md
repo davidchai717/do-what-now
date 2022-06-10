@@ -1,4 +1,5 @@
 # Now Do What - Pin the next task to your MacOS Menubar
+<img width="393" alt="Screen Shot 2022-06-03 at 9 39 05 PM" src="https://user-images.githubusercontent.com/36615646/171971632-88cf3f87-f0df-47ac-8d62-698b79ae25ba.png">
 
 ### What is this?
 
