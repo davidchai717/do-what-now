@@ -50,7 +50,10 @@ app.whenReady().then(async () => {
       tray.setTitle(await tt.getTaskTitle());
     }, +process.env.INTERVAL || 30000);
   } catch (e) {
-    throw e;
+    await dialog.showErrorBox("Something went wrong!", e || "Unknown error");
+    if (interval) {
+      clearInterval(interval);
+    }
   }
 });
 

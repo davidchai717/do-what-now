@@ -1,4 +1,5 @@
 import axios from "axios";
+import fs from "fs/promises";
 
 /**
  * Forked from https://github.com/ArthurDelamare/ticktick-api
@@ -12,21 +13,48 @@ class TickTickService {
     this.cookieHeader = "";
   }
 
+  async _getExistingCookie(): Promise<string> {
+    try {
+      const cookie = (await fs.readFile("cookie.txt")).toString();
+      return cookie;
+    } catch (_) {
+      return "";
+    }
+  }
+
   /**
    * Login to TickTick, necessary to make any other request
    */
   async login({ username, password }): Promise<void> {
-    const url = "https://ticktick.com/api/v2/user/signon?wc=true&remember=true";
+    try {
+      const existingCookie = await this._getExistingCookie();
+      if (existingCookie) {
+        this.cookieHeader = existingCookie;
+        console.log("fetched existing cookie", existingCookie);
+        return;
+      }
 
-    const options = {
-      username,
-      password,
-    };
-    const result = await axios.post(url, options, {
-      headers: { "Content-Type": "application/json" },
-    });
+      console.log("okay no existing cookie");
 
-    this.cookieHeader = result.headers["set-cookie"].join("; ") + ";";
+      const url =
+        "https://api.ticktick.com/api/v2/user/signin?wc=true&remember=true";
+
+      const options = {
+        username,
+        password,
+      };
+
+      const result = await axios.post(url, options, {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      this.cookieHeader = result.headers["set-cookie"].join("; ") + ";";
+
+      await fs.writeFile("cookie.txt", this.cookieHeader);
+    } catch (e) {
+      console.log("error", e);
+      throw e?.response?.data?.errorCode || "Login error";
+    }
   }
 
   /**
