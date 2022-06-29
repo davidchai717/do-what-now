@@ -135,4 +135,4 @@ class TickTickService {
   }
 }
 
-export default TickTickService;
+export default new TickTickService();

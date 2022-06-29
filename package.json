@@ -4,10 +4,12 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "predev": "npm run build",
-    "dev": "electron dist/app",
-    "build": "npm run build:main",
-    "build:main": "tsc",
+    "predev": "npm run build:electron",
+    "dev": "npm run dev:electron",
+    "dev:frontend": "cd src/frontend/window-mode && npm run dev",
+    "dev:electron": "electron dist/electron-backend/app",
+    "build": "npm run build:electron",
+    "build:electron": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
