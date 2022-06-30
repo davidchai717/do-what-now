@@ -8,8 +8,9 @@ export const createWindowModeWin = () => {
     vibrancy: "under-window",
     webPreferences: { nodeIntegration: true, contextIsolation: false },
   });
-  windowModeWin.loadURL("http://localhost:8080");
+  windowModeWin.setAlwaysOnTop(true, "screen-saver");
   windowModeWin.setVisibleOnAllWorkspaces(true);
+  windowModeWin.loadURL("http://localhost:8080");
   windowModeWin.hide();
 
   windowModeWin.on("close", (e) => {

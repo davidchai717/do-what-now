@@ -1,5 +1,6 @@
 import { Menu, dialog, Notification, Tray, BrowserWindow } from "electron";
 import tt from "../services/TickTick";
+import { wrapTitleInTemplate } from "../utils/title";
 
 const initializeMenu = (tray: Tray, window: BrowserWindow) => {
   const menu = Menu.buildFromTemplate([
@@ -9,7 +10,7 @@ const initializeMenu = (tray: Tray, window: BrowserWindow) => {
       label: "Sync Now",
       click: async () => {
         const newPinnedTask = await tt.getTaskTitle();
-        tray.setTitle(newPinnedTask);
+        tray.setTitle(wrapTitleInTemplate(newPinnedTask));
         window.webContents.send("new-pinned-task", newPinnedTask);
         new Notification({
           title: "Sync was successful",

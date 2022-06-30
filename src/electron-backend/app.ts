@@ -1,20 +1,20 @@
-import { app, Tray, dialog, BrowserWindow } from "electron";
+import { app, Tray, dialog } from "electron";
 import tt from "../services/TickTick";
+import { wrapTitleInTemplate } from "../utils/title";
 import { createWindowModeWin } from "./windows";
 import initializeMenu from "./menu";
 
 require("dotenv").config();
 
-let interval;
-let tray: Tray;
-let windowModeWin: BrowserWindow;
+let interval: NodeJS.Timer;
 
 app.setName("DoWhatNow");
+app.dock.hide();
 
 app.whenReady().then(async () => {
   try {
-    windowModeWin = createWindowModeWin();
-    tray = new Tray("tick.png");
+    const windowModeWin = createWindowModeWin();
+    const tray = new Tray("tick.png");
     tray.setTitle("Loading the next task...");
     const contextMenu = initializeMenu(tray, windowModeWin);
     tray.setContextMenu(contextMenu);
@@ -23,11 +23,11 @@ app.whenReady().then(async () => {
       password: process.env.PASSWORD,
     });
 
-    tray.setTitle(await tt.getTaskTitle());
+    tray.setTitle(wrapTitleInTemplate(await tt.getTaskTitle()));
 
-    interval = setInterval(async () => {
+    interval = setInterval(async (): Promise<void> => {
       const newPinnedTask = await tt.getTaskTitle();
-      tray.setTitle(newPinnedTask);
+      tray.setTitle(wrapTitleInTemplate(newPinnedTask));
       windowModeWin.webContents.send("new-pinned-task", newPinnedTask);
     }, +process.env.INTERVAL || 30000);
   } catch (e) {

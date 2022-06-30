@@ -7,21 +7,24 @@
 </script>
 
 <main>
-	<p>{taskName || "Loading the next task..."}</p>
+	<div class="prefix">Do this now:</div>
+	<p><strong>{taskName || "Loading the next task..."}</strong></p>
 </main>
 
 <style>
 	main {
-		-webkit-user-select: none;
-  		-webkit-app-region: drag;
 		text-align: center;
 		padding: 1em;
 		margin: 0 auto;
+		color: white;
+	}
+
+	.prefix {
+		text-transform: uppercase;
 	}
 
 	p {
-		color: white;
+		margin: 0 0 0 0;
 		font-size: 2em;
-		font-weight: 100;
 	}
 </style>

@@ -130,8 +130,7 @@ class TickTickService {
       }
       return "✅ All done for today!";
     }
-
-    return "Do this now: ❗" + (tasksToPin[0]?.title || "N/A") + "❗";
+    return tasksToPin[0]?.title;
   }
 }
 
