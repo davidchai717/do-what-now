@@ -7,7 +7,7 @@
     "predev": "npm run build:electron",
     "dev": "npm run dev:electron",
     "dev:frontend": "cd src/frontend/window-mode && npm run dev",
-    "dev:electron": "electron dist/electron-backend/app",
+    "dev:electron": "electron build/electron-backend/app",
     "build": "npm run build:electron",
     "build:electron": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -22,20 +22,27 @@ class TickTickService {
     }
   }
 
+  async loginWithExistingCookie() {
+    const existingCookie = await this._getExistingCookie();
+    if (existingCookie) {
+      this.cookieHeader = existingCookie;
+      console.log("fetched existing cookie", existingCookie);
+      return true;
+    }
+    return false;
+  }
+
   /**
    * Login to TickTick, necessary to make any other request
    */
-  async login({ username, password }): Promise<void> {
+  async login({
+    username,
+    password,
+  }: {
+    username: string;
+    password: string;
+  }): Promise<void> {
     try {
-      const existingCookie = await this._getExistingCookie();
-      if (existingCookie) {
-        this.cookieHeader = existingCookie;
-        console.log("fetched existing cookie", existingCookie);
-        return;
-      }
-
-      console.log("okay no existing cookie");
-
       const url =
         "https://api.ticktick.com/api/v2/user/signin?wc=true&remember=true";
 
@@ -55,6 +62,10 @@ class TickTickService {
       console.log("error", e);
       throw e?.response?.data?.errorCode || "Login error";
     }
+  }
+
+  async logout() {
+    await fs.unlink("cookie.txt");
   }
 
   /**
@@ -130,6 +141,7 @@ class TickTickService {
       }
       return "✅ All done for today!";
     }
+
     return tasksToPin[0]?.title;
   }
 }

@@ -1,4 +1,11 @@
-import { Menu, dialog, Notification, Tray, BrowserWindow } from "electron";
+import {
+  Menu,
+  dialog,
+  Notification,
+  Tray,
+  BrowserWindow,
+  ipcMain,
+} from "electron";
 import tt from "../services/TickTick";
 import { wrapTitleInTemplate } from "../utils/title";
 
@@ -19,7 +26,7 @@ const initializeMenu = (tray: Tray, window: BrowserWindow) => {
       },
     },
     {
-      label: "Turn On/Off Window Mode",
+      label: "Toggle Window Mode",
       click: () => {
         if (window.isVisible()) {
           window.hide();
@@ -39,6 +46,12 @@ const initializeMenu = (tray: Tray, window: BrowserWindow) => {
     },
 
     { type: "separator" },
+    {
+      label: "Log out",
+      click: () => {
+        ipcMain.emit("logout");
+      },
+    },
     { role: "quit" },
   ]);
   return menu;
