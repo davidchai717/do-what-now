@@ -5,6 +5,7 @@ import {
   Tray,
   BrowserWindow,
   ipcMain,
+  app,
 } from "electron";
 import tt from "../services/TickTick";
 import { wrapTitleInTemplate } from "../utils/title";
@@ -52,7 +53,12 @@ const initializeMenu = (tray: Tray, window: BrowserWindow) => {
         ipcMain.emit("logout");
       },
     },
-    { role: "quit" },
+    {
+      label: "Quit DoWhatNow",
+      click: () => {
+        app.exit();
+      },
+    },
   ]);
   return menu;
 };

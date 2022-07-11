@@ -1,16 +1,31 @@
 {
-  "name": "now-do-what",
+  "name": "DoWhatNow",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "build": {
+    "appId": "com.nowdowhat.app",
+    "mac": {
+      "category": "productivity"
+    },
+    "extraMetadata": {
+      "main": "build/electron-backend/app.js"
+    },
+    "files": [
+      "build/**/*",
+      "node_modules/**/*",
+      "tick.png",
+      "cookie.txt"
+    ]
+  },
   "scripts": {
-    "predev": "npm run build:electron",
+    "predev": "npm run build:ts",
     "dev": "npm run dev:electron",
-    "dev:frontend": "cd src/frontend/window-mode && npm run dev",
     "dev:electron": "electron build/electron-backend/app",
-    "build": "npm run build:electron",
-    "build:electron": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npm run build:ts && npm run build:electron",
+    "build:ts": "tsc",
+    "build:electron": "electron-builder --dir",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "electron-builder install-app-deps"
   },
   "repository": {
     "type": "git",
@@ -25,10 +40,12 @@
   "homepage": "https://github.com/davidchai717/now-do-what#readme",
   "dependencies": {
     "axios": "^0.27.2",
-    "dotenv": "^16.0.1"
+    "dotenv": "^16.0.1",
+    "electron-log": "^4.4.8"
   },
   "devDependencies": {
     "electron": "^19.0.2",
+    "electron-builder": "^23.1.0",
     "typescript": "^4.7.2"
   }
 }

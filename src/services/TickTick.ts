@@ -1,5 +1,8 @@
 import axios from "axios";
 import fs from "fs/promises";
+import path from "path";
+
+const COOKIE_PATH = path.resolve(__dirname, "../../cookie.txt");
 
 /**
  * Forked from https://github.com/ArthurDelamare/ticktick-api
@@ -15,7 +18,7 @@ class TickTickService {
 
   async _getExistingCookie(): Promise<string> {
     try {
-      const cookie = (await fs.readFile("cookie.txt")).toString();
+      const cookie = (await fs.readFile(COOKIE_PATH)).toString();
       return cookie;
     } catch (_) {
       return "";
@@ -26,7 +29,6 @@ class TickTickService {
     const existingCookie = await this._getExistingCookie();
     if (existingCookie) {
       this.cookieHeader = existingCookie;
-      console.log("fetched existing cookie", existingCookie);
       return true;
     }
     return false;
@@ -57,15 +59,14 @@ class TickTickService {
 
       this.cookieHeader = result.headers["set-cookie"].join("; ") + ";";
 
-      await fs.writeFile("cookie.txt", this.cookieHeader);
+      await fs.writeFile(COOKIE_PATH, this.cookieHeader);
     } catch (e) {
-      console.log("error", e);
       throw e?.response?.data?.errorCode || "Login error";
     }
   }
 
   async logout() {
-    await fs.unlink("cookie.txt");
+    await fs.unlink(COOKIE_PATH);
   }
 
   /**

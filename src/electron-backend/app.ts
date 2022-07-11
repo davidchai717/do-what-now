@@ -1,13 +1,14 @@
 import { app, Tray, dialog, ipcMain, BrowserWindow } from "electron";
+import log from "electron-log";
 import tt from "../services/TickTick";
 import { wrapTitleInTemplate } from "../utils/title";
 import { createWindowModeWin, createLoginWin } from "./windows";
 import initializeMenu from "./menu";
+import path from "path";
 
 require("dotenv").config();
 
 let interval: NodeJS.Timer;
-let initialized: boolean = false;
 let loginWin: BrowserWindow;
 let windowModeWin: BrowserWindow;
 let tray: Tray;
@@ -22,6 +23,7 @@ export const setNewPinnedTask = async () => {
 };
 
 const startAutoFetch = async () => {
+  log.info("Starts auto fetching");
   await setNewPinnedTask();
   interval = setInterval(async () => {
     await setNewPinnedTask();
@@ -29,6 +31,7 @@ const startAutoFetch = async () => {
 };
 
 const stopAutoFetch = () => {
+  log.info("Stops auto fetching");
   if (interval) {
     clearInterval(interval);
   }
@@ -39,30 +42,29 @@ const showLogin = () => {
     loginWin = createLoginWin();
   }
   loginWin.show();
+  setTimeout(() => {
+    loginWin?.webContents.send("testing", "it actually works!");
+  }, 5000);
 };
 
 const openMainApp = () => {
-  if (!initialized) {
-    windowModeWin = createWindowModeWin();
-
-    tray = new Tray("tick.png");
-    const contextMenu = initializeMenu(tray, windowModeWin);
-    tray.setContextMenu(contextMenu);
-    initialized = true;
-  }
   tray.setTitle("Loading the next task...");
   startAutoFetch();
 };
 
 const closeMainApp = () => {
   stopAutoFetch();
-  windowModeWin?.close();
-  tray.destroy();
-  initialized = false;
+  windowModeWin?.hide();
 };
 
 app.whenReady().then(async () => {
   try {
+    windowModeWin = createWindowModeWin();
+    tray = new Tray(path.resolve(__dirname, "../../tick.png"));
+    const contextMenu = initializeMenu(tray, windowModeWin);
+    tray.setContextMenu(contextMenu);
+    tray.setTitle("DoWhatNow");
+
     const isLoggedIn = await tt.loginWithExistingCookie();
     if (isLoggedIn) {
       openMainApp();
@@ -80,6 +82,7 @@ app.whenReady().then(async () => {
 
 app.on("window-all-closed", () => {
   stopAutoFetch();
+  app.quit();
 });
 
 ipcMain.on("login", async (_, { username, password }) => {
@@ -88,6 +91,7 @@ ipcMain.on("login", async (_, { username, password }) => {
     loginWin?.close();
     openMainApp();
   } catch (e) {
+    log.error(e);
     loginWin?.webContents?.send("error", e);
   }
 });
@@ -96,4 +100,9 @@ ipcMain.on("logout", async () => {
   await tt.logout();
   closeMainApp();
   showLogin();
+});
+
+process.on("uncaughtException", function (error) {
+  stopAutoFetch();
+  app.exit();
 });

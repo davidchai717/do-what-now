@@ -7,7 +7,7 @@ export const createLoginWin = () => {
     height: 250,
     resizable: false,
     titleBarStyle: "hidden",
-    webPreferences: { nodeIntegration: true, contextIsolation: false },
+    webPreferences: { preload: path.resolve(__dirname, "../preload.js") },
   });
   loginWin.loadFile(path.resolve(__dirname, "../login/index.html"));
   return loginWin;
@@ -15,11 +15,11 @@ export const createLoginWin = () => {
 
 export const createWindowModeWin = () => {
   const windowModeWin = new BrowserWindow({
-    width: 500,
-    height: 250,
+    width: 380,
+    height: 150,
     titleBarStyle: "customButtonsOnHover",
     vibrancy: "dark",
-    webPreferences: { nodeIntegration: true, contextIsolation: false },
+    webPreferences: { preload: path.resolve(__dirname, "../preload.js") },
   });
   windowModeWin.setAlwaysOnTop(true, "screen-saver");
   windowModeWin.setVisibleOnAllWorkspaces(true);
