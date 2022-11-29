@@ -18,8 +18,7 @@
     ]
   },
   "scripts": {
-    "predev": "npm run build:ts",
-    "dev": "npm run dev:electron",
+    "dev": "concurrently \"tsc -w\" \"npm run dev:electron\"",
     "dev:electron": "electron build/electron-backend/app",
     "build": "npm run build:ts && npm run build:electron",
     "build:ts": "tsc",
@@ -44,8 +43,10 @@
     "electron-log": "^4.4.8"
   },
   "devDependencies": {
+    "concurrently": "^7.6.0",
     "electron": "^19.0.2",
     "electron-builder": "^23.1.0",
+    "electron-reloader": "^1.2.3",
     "typescript": "^4.7.2"
   }
 }

@@ -6,6 +6,10 @@ import { createWindowModeWin, createLoginWin } from "./windows";
 import initializeMenu from "./menu";
 import path from "path";
 
+try {
+  require("electron-reloader")(module);
+} catch (_) {}
+
 require("dotenv").config();
 
 let interval: NodeJS.Timer;

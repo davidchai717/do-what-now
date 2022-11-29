@@ -127,7 +127,7 @@ class TickTickService {
   }
 
   getTasksToPin(tasks) {
-    return tasks.filter((task) => task.priority === 5);
+    return tasks;
   }
 
   async getTaskTitle() {
@@ -136,9 +136,7 @@ class TickTickService {
 
     if (!tasksToPin.length) {
       if (todayTasks.length) {
-        return (
-          "⏭ " + todayTasks.length + " more tasks to go! Pin the next task"
-        );
+        return "⏭ " + todayTasks.length + " more tasks to go";
       }
       return "✅ All done for today!";
     }
